@@ -56,11 +56,9 @@ RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@${PROTOC_GEN_GO_VER}
     && go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@${GRPC_GO}
 
 # assets
+RUN git clone https://github.com/bishopfox/sliver /go/src/github.com/bishopfox/sliver
 WORKDIR /go/src/github.com/bishopfox/sliver
-ADD ./go-assets.sh /go/src/github.com/bishopfox/sliver/go-assets.sh
 RUN ./go-assets.sh
-
-ADD . /go/src/github.com/bishopfox/sliver/
 RUN go mod vendor && make linux && cp -vv sliver-server /opt/sliver-server
 
 RUN ls -lah \
@@ -70,13 +68,13 @@ RUN make clean \
     && rm -rf /go/src/* \
     && rm -rf /home/sliver/.sliver
 
-COPY ./docker-entrypoint.sh /opt/sliver
-RUN chmod +x /opt/sliver/docker-entrypoint.sh
-RUN chown sliver. config.json docker-entrypoint.sh
+COPY ./docker-entrypoint.sh /opt/docker-entrypoint.sh
+RUN chmod +x /opt/docker-entrypoint.sh
+RUN chown sliver. /opt/docker-entrypoint.sh
 
 USER sliver
 WORKDIR /home/sliver/
-ENTRYPOINT [ "/opt/sliver/docker-entrypoint.sh" ]
+ENTRYPOINT [ "/opt/docker-entrypoint.sh" ]
 EXPOSE 80 443 31337
 
 STOPSIGNAL SIGKILL
