@@ -65,8 +65,8 @@ RUN ls -lah \
     && /opt/sliver-server unpack --force \
     && /go/src/github.com/bishopfox/sliver/go-tests.sh
 RUN make clean \
-    && rm -rf /go/src/* \
-    && rm -rf /home/sliver/.sliver
+    # && rm -rf /go/src/* \
+    # && rm -rf /home/sliver/.sliver
 
 COPY ./docker-entrypoint.sh /opt/docker-entrypoint.sh
 RUN chmod +x /opt/docker-entrypoint.sh
